@@ -2,7 +2,7 @@ const countdown = document.getElementById('countdown');
 const statusMessages = document.querySelectorAll('.status-message');
 
 // Define a data de destino
-const targetDate = new Date('2024-12-20T00:00:00');
+const targetDate = new Date('2024-12-10T00:00:00');
 
 // Função de contagem regressiva
 function startCountdown() {
