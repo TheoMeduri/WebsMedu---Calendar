@@ -14,6 +14,7 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 let selectedDay = null;
+
 async function generateCalendar() {
     const loadingModal = document.getElementById('loading-modal');
     loadingModal.style.display = 'flex'; // Exibe o modal de carregamento
@@ -107,7 +108,6 @@ modalOverlay.addEventListener('click', () => {
     modalOverlay.style.display = 'none';
 });
 
-
 // Adicionar evento
 document.getElementById('event-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -152,84 +152,43 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
     }
 });
 
-// Carregar eventos de um dia específico
-async function loadEvents(day) {
-    const eventList = document.getElementById('event-list');
-    eventList.innerHTML = '';
+// Função para fazer login com o UID da URL
+async function loginWithUid() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uidFromUrl = urlParams.get('uid');
+
+    if (!uidFromUrl) {
+        alert('UID não encontrado na URL!');
+        return;
+    }
 
     try {
-        const querySnapshot = await db.collection('events')
-            .where('day', '==', day.toDateString())
-            .orderBy('date')
-            .get();
+        // Recuperar dados do usuário com o UID, por exemplo, do Firestore
+        const userDoc = await db.collection('users').doc(uidFromUrl).get();
+        
+        if (!userDoc.exists) {
+            alert("Usuário não encontrado!");
+            return;
+        }
 
-        querySnapshot.forEach((doc) => {
-            const event = doc.data();
-            const listItem = document.createElement('li');
-            listItem.classList.add('event-item');
+        // Suponha que você tenha um email do usuário salvo no Firestore
+        const email = userDoc.data().email;
 
-            listItem.innerHTML = `
-                <h3>${event.title}</h3>
-                <p>${event.description}</p>
-                <p><strong>Data:</strong> ${new Date(event.date.seconds * 1000).toLocaleString()}</p>
-                <div class="event-actions">
-                    <button class="edit-btn" data-id="${doc.id}">Editar</button>
-                    <button class="delete-btn" data-id="${doc.id}">Excluir</button>
-                </div>
-            `;
+        // Agora, você pode autenticar o usuário com esse email
+        await auth.signInWithEmailAndPassword(email, 'SENHA_TEMPORARIA'); // Substitua a senha com a apropriada, se necessário
 
-            eventList.appendChild(listItem);
+        alert('Usuário autenticado com sucesso!');
+        generateCalendar(); // Gerar o calendário após o login
 
-            // Botões de editar e excluir
-            listItem.querySelector('.delete-btn').addEventListener('click', async (e) => {
-                const id = e.target.getAttribute('data-id');
-                await db.collection('events').doc(id).delete();
-                loadEvents(day);
-                generateCalendar()
-            });
-
-            listItem.querySelector('.edit-btn').addEventListener('click', (e) => {
-                const id = e.target.getAttribute('data-id');
-                editEvent(id, event);
-                generateCalendar()
-            });
-        });
     } catch (error) {
-        console.error("Erro ao carregar eventos:", error);
+        console.error("Erro ao fazer login:", error);
+        alert("Erro ao autenticar usuário!");
     }
 }
 
-// Função para editar evento
-function editEvent(id, event) {
-    document.getElementById('event-title').value = event.title;
-    document.getElementById('event-description').value = event.description;
-    document.getElementById('event-date').value = new Date(event.date.seconds * 1000).toISOString().slice(0, 16);
+// Chama a função de login com UID da URL
+loginWithUid();
 
-    eventModal.style.display = 'block';
-    modalOverlay.style.display = 'block';
-
-    const form = document.getElementById('event-form');
-    form.onsubmit = async (e) => {
-        e.preventDefault();
-
-        const title = document.getElementById('event-title').value;
-        const description = document.getElementById('event-description').value;
-        const date = document.getElementById('event-date').value;
-
-        if (title && date) {
-            await db.collection('events').doc(id).update({
-                title,
-                description,
-                date: new Date(date),
-            });
-
-            form.reset();
-            eventModal.style.display = 'none';
-            modalOverlay.style.display = 'none';
-            loadEvents(selectedDay);
-        }
-    };
-}
 // Inicializar calendário e verificar autenticação
 auth.onAuthStateChanged((user) => {
     if (user) {
@@ -241,4 +200,3 @@ auth.onAuthStateChanged((user) => {
         window.location.href = 'https://websmedu.com.br/server/signin.html?href=https://calendar.websmedu.com.br/';
     }
 });
-
