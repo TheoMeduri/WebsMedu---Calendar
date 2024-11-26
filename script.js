@@ -222,12 +222,15 @@ function editEvent(id, event) {
         }
     };
 }
-
 // Inicializar calendário e verificar autenticação
 auth.onAuthStateChanged((user) => {
     if (user) {
+        // Usuário autenticado, gerar o calendário
         generateCalendar();
     } else {
+        // Usuário não autenticado, redirecionar para página de login
         alert('Por favor, faça login para acessar a agenda.');
+        window.location.href = 'https://websmedu.com.br/?href=https://calendar.websmedu.com.br/';
     }
 });
+
