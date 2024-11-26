@@ -107,6 +107,7 @@ modalOverlay.addEventListener('click', () => {
     modalOverlay.style.display = 'none';
 });
 
+
 // Adicionar evento
 document.getElementById('event-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -115,17 +116,24 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
     const description = document.getElementById('event-description').value;
     const date = document.getElementById('event-date').value; // Aqui pegamos a data do input datetime-local
 
-    const user = auth.currentUser;
+    // Extrair o UID da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const uidFromUrl = urlParams.get('uid'); // Obtém o valor do parâmetro 'uid'
 
-    if (title && date && user) {
+    if (!uidFromUrl) {
+        alert("UID não encontrado na URL!");
+        return;
+    }
+
+    if (title && date && uidFromUrl) {
         const eventDate = new Date(date); // Converte o valor do input para um objeto Date
 
-        // Adiciona o evento no Firestore
+        // Adiciona o evento no Firestore com o UID extraído
         await db.collection('events').add({
             title,
             description,
             date: eventDate,
-            createdBy: user.uid,
+            createdBy: uidFromUrl, // Usa o UID extraído da URL
             day: eventDate.toDateString() // Usa a data do evento para armazenar o "dia"
         });
 
