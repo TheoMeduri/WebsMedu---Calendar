@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Agenda</title>
+</head>
+<body>
+  <header>
+    <h1>Agenda</h1>
+  </header>
+  <div class="container">
+    <div class="calendar" id="calendar">
+      <!-- Dias serão gerados dinamicamente aqui -->
+    </div>
+
+    <ul id="event-list" class="event-list"></ul>
+  </div>
+
+  <div id="modal-overlay"></div>
+
+  <div id="event-modal">
+    <form id="event-form">
+      <input type="text" id="event-title" placeholder="Título do evento" required />
+      <textarea id="event-description" placeholder="Descrição do evento" rows="3"></textarea>
+      <input type="datetime-local" id="event-date" required />
+      <button type="submit">Adicionar Evento</button>
+    </form>
+  </div>
+
+  <button class="floating-button" id="add-event-btn">+</button>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+  
+  <div id="loading-modal">
+    <div class="modal-content"><div class="spinner"></div></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

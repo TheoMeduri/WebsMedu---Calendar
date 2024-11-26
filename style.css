@@ -1,0 +1,394 @@
+/* Variáveis para facilitar manutenção */
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #1cc88a;
+    --background-color: #f4f7fc;
+    --modal-background: rgba(0, 0, 0, 0.7);
+    --button-hover-color: #36b9cc;
+    --button-active-color: #357a96;
+    --text-color-dark: #333;
+    --text-color-light: #666;
+    --border-radius: 10px;
+    --box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    --modal-padding: 2rem;
+    --calendar-day-height: 60px;
+  }
+  
+  /* Reseta as margens e o padding */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+  
+  /* Corpo da página */
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color-dark);
+    line-height: 1.6;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  /* Cabeçalho */
+  header {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  /* Container principal */
+  .container {
+    height: 100%;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 3rem;
+    z-index: 10;
+    width: 100%;
+  }
+  
+  /* Estilo do calendário */
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1rem;
+    grid-auto-rows: var(--calendar-day-height);
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .day {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    background-color: #ffffff;
+    font-weight: 600;
+    color: var(--text-color-dark);
+    border: 2px solid #efeeee;
+    height: 70px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .day:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+  }
+
+  .day:hover .dot {
+    background-color: #4261be;
+  }
+
+  
+  .day.active {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+  
+  .day.disabled {
+    background-color: #f1f1f1;
+    color: #bbb;
+    pointer-events: none;
+  }
+  
+  /* Ponto de eventos no dia */
+  .dot {
+    width: 90%;
+    height: 6px;
+    background-color: #efeeee;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  /* Botão flutuante */
+  .floating-button {
+    z-index: 99;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: var(--primary-color);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: var(--box-shadow);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .floating-button:hover {
+    background-color: var(--button-hover-color);
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Modal de evento */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--modal-background);
+    z-index: 999;
+  }
+  
+  #event-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: var(--modal-padding);
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--box-shadow);
+    z-index: 1000;
+  }
+  
+  #event-form input,
+  #event-form textarea,
+  #event-form button {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 1.2rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #ddd;
+    font-size: 1rem;
+  }
+  
+  #event-form input:focus,
+  #event-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+  
+  #event-form button {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s ease;
+  }
+  
+  #event-form button:hover {
+    background-color: var(--button-hover-color);
+  }
+  
+  /* Lista de eventos */
+  .event-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .event-item {
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .event-item:hover {
+    background-color: #eef4ff;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .event-item h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  
+  .event-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    gap: 1rem;
+  }
+  
+  .event-actions button {
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .event-actions .edit-btn {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+  
+  .event-actions .edit-btn:hover {
+    background-color: var(--button-hover-color);
+  }
+  
+  .event-actions .delete-btn {
+    background-color: #ff6f61;
+    color: white;
+  }
+  
+  .event-actions .delete-btn:hover {
+    background-color: #ff4b3a;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .calendar {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  
+    .floating-button {
+      width: 50px;
+      height: 50px;
+      font-size: 28px;
+    }
+  
+    #event-modal {
+      padding: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+        margin: 0;
+        border-radius: 0;
+        height: 300vh;
+        padding: 20px;
+    }
+    .calendar {
+      grid-template-columns: repeat(2, 1fr);
+      border-radius: 0;
+    }
+  
+    #event-modal {
+      width: 80%;
+      padding: 1rem;
+    }
+  
+    .floating-button {
+      width: 45px;
+      height: 45px;
+      font-size: 24px;
+    }
+  }
+  
+
+  .spinner {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 9px solid #4e73df;
+    animation: spinner-bulqg1 0.8s infinite linear alternate,
+         spinner-oaa3wk 1.6s infinite linear;
+ }
+ 
+ @keyframes spinner-bulqg1 {
+    0% {
+       clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+    }
+ 
+    12.5% {
+       clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%);
+    }
+ 
+    25% {
+       clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%);
+    }
+ 
+    50% {
+       clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
+    }
+ 
+    62.5% {
+       clip-path: polygon(50% 50%, 100% 0, 100% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
+    }
+ 
+    75% {
+       clip-path: polygon(50% 50%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 50% 100%, 0% 100%);
+    }
+ 
+    100% {
+       clip-path: polygon(50% 50%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 0% 100%);
+    }
+ }
+ 
+ @keyframes spinner-oaa3wk {
+    0% {
+       transform: scaleY(1) rotate(0deg);
+    }
+ 
+    49.99% {
+       transform: scaleY(1) rotate(135deg);
+    }
+ 
+    50% {
+       transform: scaleY(-1) rotate(0deg);
+    }
+ 
+    100% {
+       transform: scaleY(-1) rotate(-135deg);
+    }
+ }
+
+ /* Modal de Carregamento */
+#loading-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #loading-modal .modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-align: center;
+    box-shadow: var(--box-shadow);
+  }
+  
