@@ -230,7 +230,7 @@ auth.onAuthStateChanged((user) => {
     } else {
         // Usuário não autenticado, redirecionar para página de login
         alert('Por favor, faça login para acessar a agenda.');
-        window.location.href = 'https://websmedu.com.br/?href=https://calendar.websmedu.com.br/';
+        window.location.href = 'https://websmedu.com.br/server/signin.html?href=https://calendar.websmedu.com.br/';
     }
 });
 
