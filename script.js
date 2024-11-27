@@ -262,7 +262,7 @@ auth.onAuthStateChanged(async (user) => {
             if (userDoc.exists) {
                 const userName = userDoc.data().name; // Obter o nome do usuário
                 const userNameElement = document.getElementById('user-name');
-                userNameElement.innerHTML = `${userName} <span id="logout"><i class="ri-logout-box-line"></i></span>`;
+                userNameElement.innerHTML = `${userName}`;
 
                 // Adicionar funcionalidade de logout
                 const logoutBtn = document.getElementById('logout');

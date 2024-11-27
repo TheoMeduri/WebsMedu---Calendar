@@ -49,14 +49,27 @@
     z-index: 10;
   }
 
-  p#user-name {
+  .div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     position: absolute;
     right: 20px;
     bottom: 10px;
+    background-color: #4261be;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  p#user-name {
     color: #fff;
   }
 
   #logout {
+    background-color: transparent;
+    border: none;
+    font-size: 1.3rem;
+    font-weight: 500;
     color: #ff1500;
   }
   
