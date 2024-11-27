@@ -174,47 +174,47 @@ async function loadEvents(day) {
 
             // Botões de editar e excluir
             listItem.querySelector('.delete-btn').addEventListener('click', async (e) => {
-            const id = e.target.getAttribute('data-id');
-            const user = auth.currentUser;
+                const id = e.target.getAttribute('data-id');
+                const user = auth.currentUser;
 
-            if (user) {
-                // Obter o evento do Firestore
-                const eventDoc = await db.collection('events').doc(id).get();
-                const eventData = eventDoc.data();
+                if (user) {
+                    // Obter o evento do Firestore
+                    const eventDoc = await db.collection('events').doc(id).get();
+                    const eventData = eventDoc.data();
 
-                // Verificar se o usuário atual é o criador do evento
-                if (eventData.createdBy === user.uid) {
-                    await db.collection('events').doc(id).delete();
-                    loadEvents(day);
-                    generateCalendar();
+                    // Verificar se o usuário atual é o criador do evento
+                    if (eventData.createdBy === user.uid) {
+                        await db.collection('events').doc(id).delete();
+                        loadEvents(day);
+                        generateCalendar();
+                    } else {
+                        alert('Você não tem permissão para excluir este evento.');
+                    }
                 } else {
-                    alert('Você não tem permissão para excluir este evento.');
+                    alert('Usuário não autenticado.');
                 }
-            } else {
-                alert('Usuário não autenticado.');
-            }
-        });
+            });
 
-        listItem.querySelector('.edit-btn').addEventListener('click', async (e) => {
-            const id = e.target.getAttribute('data-id');
-            const user = auth.currentUser;
+            listItem.querySelector('.edit-btn').addEventListener('click', async (e) => {
+                const id = e.target.getAttribute('data-id');
+                const user = auth.currentUser;
 
-            if (user) {
-                // Obter o evento do Firestore
-                const eventDoc = await db.collection('events').doc(id).get();
-                const eventData = eventDoc.data();
+                if (user) {
+                    // Obter o evento do Firestore
+                    const eventDoc = await db.collection('events').doc(id).get();
+                    const eventData = eventDoc.data();
 
-                // Verificar se o usuário atual é o criador do evento
-                if (eventData.createdBy === user.uid) {
-                    editEvent(id, eventData);
-                    generateCalendar();
+                    // Verificar se o usuário atual é o criador do evento
+                    if (eventData.createdBy === user.uid) {
+                        editEvent(id, eventData);
+                        generateCalendar();
+                    } else {
+                        alert('Você não tem permissão para editar este evento.');
+                    }
                 } else {
-                    alert('Você não tem permissão para editar este evento.');
+                    alert('Usuário não autenticado.');
                 }
-            } else {
-                alert('Usuário não autenticado.');
-            }
-        });
+            });
 
         });
     } catch (error) {
@@ -254,9 +254,29 @@ function editEvent(id, event) {
     };
 }
 
-// Inicializar calendário e verificar autenticação
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged(async (user) => {
     if (user) {
+        try {
+            // Buscar o documento do usuário na coleção "users"
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (userDoc.exists) {
+                const userName = userDoc.data().name; // Obter o nome do usuário
+                const userNameElement = document.getElementById('user-name');
+                userNameElement.innerHTML = `${userName} <span id="logout"><i class="ri-logout-box-line"></i></span>`;
+
+                // Adicionar funcionalidade de logout
+                const logoutBtn = document.getElementById('logout');
+                logoutBtn.addEventListener('click', async () => {
+                    await auth.signOut();
+                    window.location.href = './login'; // Redirecionar para a página de login
+                });
+            } else {
+                console.error("Documento do usuário não encontrado.");
+            }
+        } catch (error) {
+            console.error("Erro ao buscar dados do usuário:", error);
+        }
+
         // Usuário autenticado, gerar o calendário
         generateCalendar();
     } else {
